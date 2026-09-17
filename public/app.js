@@ -75,13 +75,18 @@
         $("authScreen").classList.add("hidden");
         $("chatScreen").classList.remove("hidden");
         $("logoutBtn").classList.remove("hidden");
+        $("navSnake").classList.remove("hidden");
+        $("navCalls").classList.remove("hidden");
         $("roomLabel").textContent = "#" + room;
+        if (MODE === "ntfy") $("connText").textContent = "тема: " + topicFor(room);
     }
 
     function showAuth() {
         $("chatScreen").classList.add("hidden");
         $("authScreen").classList.remove("hidden");
         $("logoutBtn").classList.add("hidden");
+        $("navSnake").classList.add("hidden");
+        $("navCalls").classList.add("hidden");
         $("roomLabel").textContent = "";
     }
 
@@ -362,7 +367,7 @@
         showChat();
         renderRooms();
         loadHistory().then(function () {
-            if (MODE === "ntfy") addSystem("Relay-режим (ntfy.sh). Комната определяется паролем: у кого тот же пароль (или у всех пусто) — те видят друг друга. История ~12 ч.");
+            if (MODE === "ntfy") addSystem("Комната #" + room + ". Код темы: " + topicFor(room) + " — у тебя и собеседника он должен быть одинаковым (для этого одинаковый пароль комнаты или пустой).");
             openStream();
         });
     }

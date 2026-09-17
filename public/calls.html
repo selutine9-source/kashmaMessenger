@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KashmaCall — звонки и показ экрана</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    background:#0a0a14; color:#e0e0e0;
+    font-family:'Segoe UI', Tahoma, sans-serif; height:100vh; overflow:hidden;
+    display:flex; flex-direction:column;
+}
+.topbar {
+    height:56px; display:flex; align-items:center; gap:12px; padding:0 16px;
+    background:linear-gradient(135deg,#16213e,#0f3460); border-bottom:2px solid #38bdf8;
+    flex:0 0 auto;
+}
+.topbar .logo { font-size:18px; font-weight:bold; color:#fff; }
+.topbar .logo span { color:#38bdf8; text-shadow:0 0 12px #38bdf8; }
+.topbar .spacer { flex:1; }
+.btn {
+    padding:9px 14px; border:none; border-radius:8px; color:#fff; font-size:14px; font-weight:600;
+    background:linear-gradient(135deg,#38bdf8,#0369a1); cursor:pointer;
+}
+.btn.ghost { background:#1c1c33; color:#bbb; border:1px solid #333; }
+.btn.green { background:linear-gradient(135deg,#22c55e,#15803d); }
+.btn.red { background:linear-gradient(135deg,#ef4444,#991b1b); }
+.btn:hover { filter:brightness(1.1); }
+input {
+    background:#0d0d1a; border:1px solid #2a2a4a; border-radius:8px; color:#eee;
+    padding:9px 12px; font-size:15px; outline:none; text-transform:uppercase;
+}
+input:focus { border-color:#38bdf8; }
+.container { flex:1; display:flex; min-height:0; }
+.side {
+    width:290px; background:#111122; border-right:1px solid #222;
+    padding:16px; display:flex; flex-direction:column; gap:12px; overflow-y:auto;
+}
+.side h2 { font-size:15px; color:#eee; }
+.side p { font-size:13px; color:#999; line-height:1.5; }
+.code-box {
+    font-size:24px; letter-spacing:4px; text-align:center; color:#38bdf8;
+    background:#0d0d1a; border:1px dashed #38bdf888; border-radius:10px; padding:10px;
+}
+.row { display:flex; gap:8px; align-items:center; }
+#state { font-size:13px; color:#aaa; min-height:18px; }
+.stage { flex:1; position:relative; min-width:0; min-height:0; background:#08080f; }
+video { position:absolute; object-fit:contain; }
+#remoteCam {
+    left:0; top:0; width:100%; height:100%;
+}
+#localCam {
+    right:12px; bottom:12px; width:220px; height:140px; object-fit:cover;
+    border:1px solid #38bdf8; border-radius:10px; background:#000;
+}
+#remoteScreen {
+    left:0; top:0; width:100%; height:100%; background:#000;
+}
+.screen-badge {
+    display:none; position:absolute; left:0; top:0; z-index:5;
+    background:rgba(220,38,38,.92); color:#fff; font-size:12px; font-weight:600;
+    padding:6px 12px; border-radius:0 0 10px 0;
+}
+.controls {
+    flex:0 0 auto; padding:12px; display:flex; gap:10px; justify-content:center;
+    background:#0e0e18; border-top:1px solid #222;
+}
+.footer { flex:0 0 auto; padding:8px 16px; font-size:12px; color:#666; background:#0b0b14; }
+</style>
+</head>
+<body>
+<div class="topbar">
+    <a class="btn ghost" href="index.html">&larr; Чат</a>
+    <div class="logo">Kashma<span>Call</span></div>
+    <div class="spacer"></div>
+    <span style="font-size:12px;color:#888">Код звонка:</span>
+    <span class="code-box" id="roomCode">------</span>
+</div>
+<div class="container">
+    <aside class="side">
+        <div style="display:none" id="hostPanel">
+            <h2>Создать звонок</h2>
+            <button class="btn" id="createBtn">Создать звонок</button>
+            <p>Тебе будут доступны камера/микрофон. Передай код — и после подключения принимай звонок.</p>
+        </div>
+        <div style="display:none" id="joinPanel">
+            <h2>Войти по коду</h2>
+            <div class="row">
+                <input id="joinCode" maxlength="5" placeholder="КОД" style="width:110px">
+                <button class="btn" id="joinBtn">Позвонить</button>
+            </div>
+            <p>Введи код того, кто создал звонок. Разреши доступ к камере/микрофону.</p>
+        </div>
+        <div id="leaveWrap"></div>
+        <div id="state">Выйди из чата, чтобы начать</div>
+        <div id="controlsWrap"></div>
+        <p class="hint" style="font-size:12px;color:#777">«Экран» показывает собеседнику твой экран целиком (в том числе KashmaOS). При прохождении через сеть может потребоваться немного времени на установку соединения.</p>
+    </aside>
+    <div class="stage">
+        <video id="remoteCam" autoplay playsinline></video>
+        <video id="remoteScreen" autoplay playsinline></video>
+        <video id="localCam" autoplay playsinline muted></video>
+        <div class="screen-badge" id="screenBadge">ЭКРАН</div>
+    </div>
+</div>
+<div class="controls" id="controlsRow"></div>
+<div class="footer">KashmaOS · звонки P2P через WebRTC. Аудио/видео идут напрямую между участниками.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script>
+(function () {
+    "use strict";
+    var $ = function (id) { return document.getElementById(id); };
+    var CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    function randCode() {
+        var s = "";
+        for (var i = 0; i < 5; i++) s += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
+        return s;
+    }
+
+    var mode = null;          // 'host' | 'guest'
+    var peer = null;
+    var hostId = null;
+    var myStream = null;
+    var camCall = null;
+    var screenOut = null;     // outgoing screen MediaConnection
+    var screenIn = null;      // incoming screen MediaConnection
+    var hasCam = true, hasMic = true;
+
+    function PEER_CONFIG() {
+        return {
+            config: {
+                iceServers: [
+                    { urls: "stun:stun.l.google.com:19302" },
+                    { urls: "stun:global.stun.twilio.com:3478" }
+                ]
+            }
+        };
+    }
+
+    function setState(t) { $("state").textContent = t; }
+
+    function attach(el, stream) {
+        if (!stream) { el.srcObject = null; return; }
+        el.srcObject = stream;
+    }
+
+    function initMedia() {
+        return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .catch(function () {
+                hasCam = false;
+                return navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            })
+            .then(function (s) {
+                if (!s.getAudioTracks().length) hasMic = false;
+                myStream = s;
+                attach($("localCam"), s);
+                renderControls();
+                return s;
+            })
+            .catch(function (e) {
+                myStream = null;
+                hasCam = hasMic = false;
+                setState("Нет доступа к камере/микрофону (" + (e.name || e) + "). Звонок будет без медиа.");
+                renderControls();
+                return null;
+            });
+    }
+
+    function renderControls() {
+        var w = $("controlsRow");
+        if (!mode) { w.innerHTML = ""; return; }
+        var html = "";
+        if (myStream && hasMic)
+            html += '<button class="btn" id="micBtn">Микрофон: вкл</button>';
+        if (myStream && hasCam)
+            html += '<button class="btn" id="camBtn">Камера: вкл</button>';
+        html += '<button class="btn green" id="screenBtn">' +
+            (screenOut ? "Остановить экран" : "Показать экран") + "</button>";
+        html += '<button class="btn red" id="hangBtn">Завершить</button>';
+        w.innerHTML = html;
+        if (myStream && hasMic)
+            $("micBtn").addEventListener("click", function () {
+                var on = myStream.getAudioTracks().every(function (t) { return !t.enabled; });
+                myStream.getAudioTracks().forEach(function (t) { t.enabled = on; });
+                $("micBtn").textContent = "Микрофон: " + (on ? "вкл" : "выкл");
+            });
+        if (myStream && hasCam)
+            $("camBtn").addEventListener("click", function () {
+                var on = myStream.getVideoTracks().every(function (t) { return !t.enabled; });
+                myStream.getVideoTracks().forEach(function (t) { t.enabled = on; });
+                $("camBtn").textContent = "Камера: " + (on ? "вкл" : "выкл");
+            });
+        $("screenBtn").addEventListener("click", toggleScreen);
+        $("hangBtn").addEventListener("click", function () { leave(false); });
+    }
+
+    function startHost() {
+        var code = randCode();
+        $("roomCode").textContent = code;
+        setState("Создаю звонок " + code + " ...");
+        initMedia().then(function () {
+            peer = new Peer("kashma-call-" + code, PEER_CONFIG());
+            hostId = "kashma-call-" + code;
+            peer.on("open", function () {
+                setState("Звонок создан. Передай код: " + code + ". Ожидаю подключение...");
+            });
+            onIncoming();
+            peer.on("error", function (e) {
+                if (e.type === "unavailable-id") { setState("Ошибка: код занят."); leave(true); return; }
+                setState("Ошибка сети (" + e.type + ").");
+            });
+        });
+    }
+
+    function startGuest() {
+        var code = $("joinCode").value.trim().toUpperCase();
+        if (code.length < 5) { setState("Введи полный код (5 символов)."); return; }
+        hostId = "kashma-call-" + code;
+        $("roomCode").textContent = code;
+        $("hostPanel").style.display = "none";
+        $("joinPanel").style.display = "none";
+        mode = "guest";
+        setState("Подключаюсь...");
+        initMedia().then(function () {
+            peer = new Peer(PEER_CONFIG());
+            peer.on("open", function () {
+                if (!myStream) { setState("Соединюсь без медиа..."); }
+                camCall = peer.call(hostId, myStream || undefined, { metadata: "cam" });
+                setState("Звонок установлен. Дождись ответа хоста.");
+            });
+            onIncoming();
+            peer.on("error", function (e) {
+                if (e.type === "peer-unavailable") setState("Звонок не найден. Проверь код.");
+                else setState("Ошибка сети (" + e.type + ").");
+            });
+        });
+    }
+
+    function onIncoming() {
+        peer.on("call", function (call) {
+            if (call.metadata === "screen") {
+                if (screenIn) { try { screenIn.close(); } catch (e) {} }
+                screenIn = call;
+                call.answer();
+                call.on("stream", function (s) {
+                    attach($("remoteScreen"), s);
+                    $("remoteScreen").style.display = "";
+                    $("screenBadge").style.display = "";
+                });
+                call.on("close", function () { stopInScreen(); });
+                call.on("error", function () { stopInScreen(); });
+            } else {
+                if (camCall && camCall !== call) { try { camCall.close(); } catch (e) {} }
+                camCall = call;
+                call.answer(myStream || undefined);
+                setState("Идёт звонок.");
+                call.on("stream", function (s) { attach($("remoteCam"), s); });
+                call.on("close", function () {
+                    attach($("remoteCam"), null);
+                    setState("Собеседник завершил звонок.");
+                    if (mode === "guest") leave(false);
+                });
+                call.on("error", function () {
+                    attach($("remoteCam"), null);
+                    setState("Ошибка звонка.");
+                });
+            }
+        });
+    }
+
+    function toggleScreen() {
+        if (screenOut) { stopOutScreen(); return; }
+        if (!navigator.mediaDevices.getDisplayMedia) { setState("Показ экрана не поддерживается этим веб-движком."); return; }
+        navigator.mediaDevices.getDisplayMedia({ video: true })
+            .then(function (stream) {
+                var otherId = (mode === "host" ? whoConn() : hostId);
+                if (!otherId) {
+                    stream.getTracks().forEach(function (t) { t.stop(); });
+                    setState("Никто не подключён — показать экран невозможно.");
+                    return;
+                }
+                screenOut = peer.call(otherId, stream, { metadata: "screen" });
+                screenOut.on("error", function () { stopOutScreen(); setState("Не удалось отправить экран."); });
+                stream.getVideoTracks()[0].addEventListener("ended", function () { stopOutScreen(); });
+                setState("Идёт показ экрана.");
+                renderControls();
+            })
+            .catch(function (e) {
+                setState("Показ экрана отменён/недоступен (" + (e.name || e) + ").");
+            });
+    }
+
+    function whoConn() {
+        if (camCall && camCall.peer) return camCall.peer;
+        return null;
+    }
+
+    function stopOutScreen() {
+        if (screenOut) {
+            var s = screenOut;
+            screenOut = null;
+            try { s.close(); } catch (e) {}
+            try { s.localStream && s.localStream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+        }
+        setState("Показ экрана остановлен.");
+        renderControls();
+    }
+
+    function stopInScreen() {
+        if (screenIn) {
+            try { screenIn.close(); } catch (e) {}
+            screenIn = null;
+        }
+        attach($("remoteScreen"), null);
+        $("remoteScreen").style.display = "none";
+        $("screenBadge").style.display = "none";
+    }
+
+    function leave(quiet) {
+        if (peer) { try { peer.destroy(); } catch (e) {} peer = null; }
+        camCall = null;
+        stopOutScreen(); stopInScreen();
+        if (myStream) { myStream.getTracks().forEach(function (t) { t.stop(); }); myStream = null; }
+        attach($("localCam"), null); attach($("remoteCam"), null);
+        $("remoteScreen").style.display = "none";
+        $("screenBadge").style.display = "none";
+        mode = null;
+        $("roomCode").textContent = "------";
+        $("hostPanel").style.display = "";
+        $("joinPanel").style.display = "";
+        $("leaveWrap").innerHTML = "";
+        $("controlsRow").innerHTML = "";
+        if (!quiet) setState("Выйди из чата, чтобы начать");
+    }
+
+    function showButtons() {
+        $("hostPanel").style.display = "none";
+        $("joinPanel").style.display = "none";
+        $("leaveWrap").innerHTML = '<button class="btn ghost" id="leaveBtn">Завершить</button>';
+        $("leaveBtn").addEventListener("click", function () { leave(false); });
+        renderControls();
+    }
+
+    $("createBtn").addEventListener("click", function () {
+        if (mode) return;
+        mode = "host";
+        $("hostPanel").style.display = "none";
+        $("joinPanel").style.display = "none";
+        showButtons();
+        startHost();
+    });
+    $("joinBtn").addEventListener("click", function () {
+        if (mode) return;
+        mode = "guest";
+        $("hostPanel").style.display = "none";
+        $("joinPanel").style.display = "none";
+        showButtons();
+        startGuest();
+    });
+    $("joinCode").addEventListener("keydown", function (e) { if (e.key === "Enter") { $("joinBtn").click(); } });
+
+    setState("Создай звонок или введи код друга");
+})();
+</script>
+</body>
+</html>

@@ -32,6 +32,11 @@ input { font-family: inherit; }
     border-radius: 6px; padding: 6px 12px; font-size: 13px;
 }
 .btn-ghost:hover { border-color: #8a2be2; color: #fff; }
+.btn-app {
+    text-decoration: none; background: transparent; color: #ccc; border: 1px solid #333;
+    border-radius: 6px; padding: 6px 12px; font-size: 13px;
+}
+.btn-app:hover { border-color: #8a2be2; color: #fff; }
 
 .auth-screen {
     height: calc(100vh - 56px);
