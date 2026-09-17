@@ -86,6 +86,11 @@
         $("roomLabel").textContent = "";
     }
 
+    function syncCallHref() {
+        var el = $("navCalls");
+        if (el) el.href = "calls.html?room=" + encodeURIComponent(room);
+    }
+
     function clearMessages() {
         $("messages").innerHTML = '<div class="empty">Пока сообщений нет. Напиши первым!</div>';
     }
@@ -348,6 +353,7 @@
         if (r === room) return;
         room = r;
         $("roomLabel").textContent = "#" + room;
+        syncCallHref();
         renderRooms();
         renderUsers([]);
         closeStream();
@@ -360,6 +366,7 @@
     function enterChat(user) {
         me = user;
         room = "general";
+        syncCallHref();
         showChat();
         renderRooms();
         loadHistory().then(function () {

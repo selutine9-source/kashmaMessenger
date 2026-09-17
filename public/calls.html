@@ -123,6 +123,23 @@ video { position:absolute; object-fit:contain; }
         return s;
     }
 
+    function roomCode(pw) {
+        var h = 5381;
+        pw = String(pw || "");
+        for (var i = 0; i < pw.length; i++) h = ((h * 33) ^ pw.charCodeAt(i)) >>> 0;
+        var s = "";
+        for (var j = 0; j < 5; j++) { s += CODE_CHARS[h % CODE_CHARS.length]; h = Math.floor(h / CODE_CHARS.length); }
+        return s;
+    }
+
+    var qroom = new URLSearchParams(location.search).get("room");
+    if (qroom) {
+        var rc = roomCode(qroom);
+        $("roomCode").textContent = rc;
+        $("joinCode").value = rc;
+        setState("Код звонка от комнаты чата. Нажми «Создать звонок» или «Позвонить».");
+    }
+
     var mode = null;          // 'host' | 'guest'
     var peer = null;
     var hostId = null;
