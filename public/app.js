@@ -75,8 +75,6 @@
         $("authScreen").classList.add("hidden");
         $("chatScreen").classList.remove("hidden");
         $("logoutBtn").classList.remove("hidden");
-        $("navSnake").classList.remove("hidden");
-        $("navCalls").classList.remove("hidden");
         $("roomLabel").textContent = "#" + room;
         if (MODE === "ntfy") $("connText").textContent = "тема: " + topicFor(room);
     }
@@ -85,8 +83,6 @@
         $("chatScreen").classList.add("hidden");
         $("authScreen").classList.remove("hidden");
         $("logoutBtn").classList.add("hidden");
-        $("navSnake").classList.add("hidden");
-        $("navCalls").classList.add("hidden");
         $("roomLabel").textContent = "";
     }
 
