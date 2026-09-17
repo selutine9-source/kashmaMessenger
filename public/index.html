@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KashmaMessenger — KF Production</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="logo">Kashma<span>Messenger</span></div>
+        <div class="room-label" id="roomLabel"></div>
+        <div class="spacer"></div>
+        <div class="status"><span class="dot" id="connDot"></span><span id="connText">оффлайн</span></div>
+        <button class="btn-ghost hidden" id="logoutBtn">Выйти</button>
+    </header>
+
+    <section class="auth-screen" id="authScreen">
+        <div class="auth-card">
+            <div class="tabs">
+                <button class="tab active" data-tab="login" type="button">Вход</button>
+                <button class="tab" data-tab="register" type="button">Регистрация</button>
+            </div>
+            <h1>Kashma<span>Messenger</span></h1>
+            <p class="sub">Без email: только ник и пароль. Придумай ник — и общайся.</p>
+            <form id="authForm">
+                <div class="field">
+                    <label for="nick">Ник</label>
+                    <input id="nick" maxlength="24" placeholder="Например, kashma" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label for="pass">Пароль</label>
+                    <input id="pass" type="password" maxlength="128" placeholder="минимум 4 символа" autocomplete="current-password" required>
+                </div>
+                <div class="field hidden" id="pass2Field">
+                    <label for="pass2">Повтори пароль</label>
+                    <input id="pass2" type="password" maxlength="128" placeholder="повтори пароль" autocomplete="new-password">
+                </div>
+                <button class="btn-main" id="authBtn" type="submit">Войти</button>
+                <div class="auth-err" id="authErr"></div>
+            </form>
+        </div>
+    </section>
+
+    <section class="chat-screen hidden" id="chatScreen">
+        <aside class="sidebar">
+            <h3>Комнаты</h3>
+            <div class="rooms" id="roomList"></div>
+            <h3 style="margin-top:12px">Онлайн (<span id="userCount">0</span>)</h3>
+            <div class="users" id="userList"></div>
+        </aside>
+        <main class="main">
+            <div class="messages" id="messages">
+                <div class="empty">Пока сообщений нет. Напиши первым!</div>
+            </div>
+            <form class="composer" id="composer">
+                <input id="msgInput" maxlength="2000" placeholder="Сообщение..." autocomplete="off" required>
+                <button type="submit">Отправить</button>
+            </form>
+        </main>
+    </section>
+
+    <script src="app.js"></script>
+</body>
+</html>
