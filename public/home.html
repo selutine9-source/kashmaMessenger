@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kashma Internet — выбор</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    background:linear-gradient(150deg,#0a0f1e,#101d33 55%,#0e2a24);
+    color:#e6edf3; font-family:'Segoe UI', Tahoma, sans-serif;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:32px 16px;
+}
+h1 { font-size:34px; font-weight:800; letter-spacing:1px; }
+h1 small { display:block; font-size:14px; font-weight:400; color:#8fa3bf; margin-top:4px; letter-spacing:0; }
+.cards {
+    display:flex; flex-direction:column; gap:16px; margin-top:36px; width:100%; max-width:420px;
+}
+a.card {
+    display:flex; align-items:center; gap:18px; padding:20px 22px; border-radius:16px;
+    text-decoration:none; color:#fff; transition:transform .12s ease, filter .12s ease;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+a.card:hover { transform:translateY(-2px); filter:brightness(1.08); }
+a.card .ic {
+    width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    font-size:26px; font-weight:800; background:rgba(255,255,255,.14); flex:0 0 auto;
+}
+a.card .tx b { display:block; font-size:19px; }
+a.card .tx span { display:block; font-size:13px; color:rgba(255,255,255,.78); margin-top:3px; }
+.msg  { background:linear-gradient(135deg,#1e40af,#2563eb); }
+.snake{ background:linear-gradient(135deg,#15803d,#22c55e); }
+.call { background:linear-gradient(135deg,#0369a1,#0ea5e9); }
+.foot { margin-top:34px; font-size:12px; color:#6b7f9c; text-align:center; line-height:1.6; }
+</style>
+</head>
+<body>
+<h1>Kashma Internet<small>выбери, что открыть</small></h1>
+<div class="cards">
+    <a class="card msg" href="index.html">
+        <div class="ic">М</div>
+        <div class="tx"><b>Мессенджер</b><span>Комнаты-чаты по общему паролю, звонок из комнаты</span></div>
+    </a>
+    <a class="card snake" href="snake.html">
+        <div class="ic">S</div>
+        <div class="tx"><b>Змейка</b><span>Онлайн-игра до 4 игроков, встроенный чат</span></div>
+    </a>
+    <a class="card call" href="calls.html">
+        <div class="ic">З</div>
+        <div class="tx"><b>Звонок</b><span>Голос и видео, показ экрана</span></div>
+    </a>
+</div>
+<div class="foot">Всё работает внутри KashmaOS через встроенный браузер (WebView2).<br>Соединения P2P поверх WebRTC.</div>
+</body>
+</html>
