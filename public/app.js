@@ -23,7 +23,7 @@
     var room = "general";
     var stream = null;
     var pressStream = null;
-    var topicBase = "";
+    var roomSecret = "";
     var authMode = "login";
     var seen = {};
 
@@ -51,13 +51,18 @@
         return h >>> 0;
     }
 
-    function relayHash(user, pass) {
-        var s = String(user).toLowerCase() + "|" + String(pass);
+    function relayHash(s) {
+        s = String(s);
         return (fnv(s, 2166136261).toString(36) + fnv(s + "#2", 2246822507).toString(36) + fnv(s + "#3", 3266489909).toString(36));
     }
 
-    function topicFor(r) { return topicBase + "-" + slug(r); }
-    function presenceFor(r) { return topicBase + "-p-" + slug(r); }
+    function roomSecretFor(pass) {
+        pass = String(pass || "");
+        return pass ? relayHash("kashma-room|" + pass).slice(0, 20) : "";
+    }
+
+    function topicFor(r) { return "kashma-" + (roomSecret ? roomSecret + "-" : "") + slug(r); }
+    function presenceFor(r) { return topicFor(r) + "-p"; }
 
     function fmtTime(ts) {
         var d = new Date(ts);
@@ -238,15 +243,15 @@
         auth: function () {
             var nick = $("nick").value.trim();
             var pass = $("pass").value;
-            topicBase = ("kashma-" + slug(nick) + "-" + relayHash(nick, pass)).slice(0, 48);
-            try { localStorage.setItem(PROFILE_KEY, JSON.stringify({ u: nick, h: relayHash(nick, pass) })); } catch (e) {}
+            roomSecret = roomSecretFor(pass);
+            try { localStorage.setItem(PROFILE_KEY, JSON.stringify({ u: nick, s: roomSecret })); } catch (e) {}
             return Promise.resolve(nick);
         },
         restore: function () {
             var saved = null;
             try { saved = JSON.parse(localStorage.getItem(PROFILE_KEY)); } catch (e) {}
-            if (!saved || !saved.h) return Promise.resolve(null);
-            topicBase = ("kashma-" + slug(saved.u) + "-" + saved.h).slice(0, 48);
+            if (!saved || !saved.u) return Promise.resolve(null);
+            roomSecret = saved.s || "";
             return Promise.resolve(saved.u);
         },
         history: function (r) {
@@ -357,7 +362,7 @@
         showChat();
         renderRooms();
         loadHistory().then(function () {
-            if (MODE === "ntfy") addSystem("Relay-режим (ntfy.sh): история ~12 ч, live. Сообщения видны тем, кто знает ник и пароль.");
+            if (MODE === "ntfy") addSystem("Relay-режим (ntfy.sh). Комната определяется паролем: у кого тот же пароль (или у всех пусто) — те видят друг друга. История ~12 ч.");
             openStream();
         });
     }
@@ -367,7 +372,11 @@
         var pass = $("pass").value;
         $("authErr").textContent = "";
         if (nick.length < 2) { $("authErr").textContent = "Ник минимум 2 символа."; return; }
-        if (pass.length < 4) { $("authErr").textContent = "Пароль минимум 4 символа."; return; }
+        if (MODE === "api") {
+            if (pass.length < 4) { $("authErr").textContent = "Пароль минимум 4 символа."; return; }
+        } else if (pass.length > 0 && pass.length < 4) {
+            $("authErr").textContent = "Пароль комнаты — минимум 4 символа или пусто."; return;
+        }
         if (authMode === "register" && pass !== $("pass2").value) {
             $("authErr").textContent = "Пароли не совпадают."; return;
         }
@@ -437,6 +446,11 @@
     $("authErr").textContent = "Определяю бэкенд...";
     detectBackend().then(function (mode) {
         MODE = mode;
+        if (mode === "ntfy") {
+            $("authSub").textContent = "Общий пароль комнаты: у кого пароль совпадает (или у всех пусто) — те видят друг друга. Ник — просто подпись.";
+            $("passLabel").textContent = "Пароль комнаты (общий)";
+            $("pass").setAttribute("placeholder", "общий; пусто — публичная комната");
+        }
         $("authBtn").disabled = false;
         $("authErr").textContent = "";
         return backend().restore();

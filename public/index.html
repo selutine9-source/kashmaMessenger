@@ -22,14 +22,14 @@
                 <button class="tab" data-tab="register" type="button">Регистрация</button>
             </div>
             <h1>Kashma<span>Messenger</span></h1>
-            <p class="sub">Без email: только ник и пароль. Придумай ник — и общайся.</p>
+            <p class="sub" id="authSub">Без email: только ник и пароль. Придумай ник — и общайся.</p>
             <form id="authForm">
                 <div class="field">
                     <label for="nick">Ник</label>
                     <input id="nick" maxlength="24" placeholder="Например, kashma" autocomplete="username" required>
                 </div>
                 <div class="field">
-                    <label for="pass">Пароль</label>
+                    <label for="pass" id="passLabel">Пароль</label>
                     <input id="pass" type="password" maxlength="128" placeholder="минимум 4 символа" autocomplete="current-password" required>
                 </div>
                 <div class="field hidden" id="pass2Field">
