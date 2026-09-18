@@ -365,12 +365,13 @@ function ensurePlayer(conn) {
         var code = randCode();
         $("roomCode").textContent = code;
         $("chatRoom").textContent = code;
-        setState("Создаю комнату " + code + " ...");
+        setState("Комната " + code + ": игра уже идёт, жду друзей...");
+        hostLoop();
+        addSelfHostPlayer();
+        if (typeof Peer === "undefined") { setState("Комната " + code + ": сеть недоступна, играй локально. Друзья не смогут подключиться без PeerJS."); return; }
         peer = new Peer("kashma-snake-" + code, PEER_CONFIG());
         peer.on("open", function () {
             setState("Комната открыта. Передай другу код: " + code);
-            hostLoop();
-            addSelfHostPlayer();
         });
         peer.on("connection", function (conn) {
             guestConns.push(conn);
