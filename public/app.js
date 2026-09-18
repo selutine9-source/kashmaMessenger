@@ -261,20 +261,7 @@
             return Promise.resolve(saved.u);
         },
         history: function (r) {
-            return fetch(NTFY + "/" + topicFor(r) + "/json?poll=1&since=12h")
-                .then(function (x) { return x.text(); })
-                .then(function (txt) {
-                    var out = [];
-                    txt.split("\n").forEach(function (line) {
-                        if (!line) return;
-                        var w;
-                        try { w = JSON.parse(line); } catch (e) { return; }
-                        if (w.event !== "message") return;
-                        try { out.push(JSON.parse(w.message)); } catch (e) {}
-                    });
-                    return out;
-                })
-                .catch(function () { return []; });
+            return Promise.resolve([]);
         },
         send: function (r, text) {
             var msg = { id: Math.random().toString(36).slice(2, 10), u: me, t: text.slice(0, 3500), ts: Date.now() };
@@ -289,7 +276,7 @@
             ntfyUsers = {};
             onState("connecting");
 
-            stream = new EventSource(NTFY + "/" + topicFor(r) + "/sse");
+            stream = new EventSource(NTFY + "/" + topicFor(r) + "/sse?since=12h");
             stream.onopen = function () { onState("on"); };
             stream.onerror = function () { onState("off"); };
             stream.onmessage = function (e) {
