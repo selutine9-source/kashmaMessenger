@@ -270,6 +270,12 @@ canvas {
         return -1;
     }
 
+function ensurePlayer(conn) {
+        if (conn._added) return;
+        conn._added = true;
+        addPlayer(conn);
+    }
+
     function addPlayer(conn) {
         var s = slotOf(conn);
         if (s < 0) { try { conn.send({ t: "full" }); } catch (e) {} try { conn.close(); } catch (e) {} return; }
@@ -367,9 +373,7 @@ canvas {
         });
         peer.on("connection", function (conn) {
             conn.on("open", function () {
-                var nk = (conn.metadata && conn.metadata.n) || "игрок";
-                conn.send({ t: "welcome", s: snapshot(), you: game.players.length });
-                addPlayer(conn);
+                ensurePlayer(conn);
             });
             conn.on("data", function (d) {
                 if (!d || !d.t) return;
@@ -378,7 +382,7 @@ canvas {
                     addChat(d.n, d.m);
                     return;
                 }
-                if (d.t === "join") { if (conn.metadata) conn.metadata.n = d.n; addPlayer(conn); return; }
+                if (d.t === "join") { if (conn.metadata) conn.metadata.n = d.n; var pl0 = game.players.find(function (p) { return p.slot === slotOf(conn); }); if (pl0 && !pl0._named && d.n) { pl0.nick = d.n; pl0._named = true; broadcastState(true); } return; }
                 if (d.t === "dir") {
                     var s = slotOf(conn);
                     var pl = game.players.find(function (p) { return p.slot === s; });
@@ -421,7 +425,13 @@ canvas {
             hostConn.on("data", function (d) {
                 lastStateAt = Date.now();
                 if (!d) return;
-                if (d.t === "welcome" || d.t === "state") {
+                if (d.t === "welcome") {
+                    state = d.s || d;
+                    state.you = d.you;
+                    alive = true;
+                    showLeave();
+                    render();
+                } else if (d.t === "state") {
                     state = d;
                     alive = true;
                     showLeave();
@@ -530,7 +540,7 @@ canvas {
         var el = $("stats");
         if (!players || !players.length) { el.innerHTML = ""; return; }
         el.innerHTML = "<h2>Игроки</h2>" + players.map(function (p, i) {
-            var self = (mode === "guest" && state && state.ps && state.ps[i] && state.ps.length && i === 0) ? " (ты)" : "";
+            var self = (mode === "guest" && state && state.you !== undefined && p.slot === state.you) ? " (ты)" : "";
             if (p.slot === undefined) p.slot = i;
             return '<div class="pl"><span class="sw" style="background:' + p.color + '"></span>' +
                 (p.nick || "?") + " · " + (p.score || 0) + " · " + (p.alive === false ? "💀" : "играет") + "</div>";
