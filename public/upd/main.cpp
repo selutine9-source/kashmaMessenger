@@ -121,6 +121,7 @@ struct Strings {
     const wchar_t* pass_btn_clear;
     const wchar_t* pass_wrong;
     const wchar_t* pass_login_hint;
+    const wchar_t* auto_update;
 };
 
 static const Strings g_strings[LANG_COUNT] = {
@@ -139,7 +140,8 @@ static const Strings g_strings[LANG_COUNT] = {
         L"Code Editor", L"KCPP", L"Save", L"Saved!", L"Delete", L"Copy", L"Paste", L"Run", L"Compile & Run", L"Classes", L"v4.10.2.0",
         L"Open", L"Rename", L"Cancel", L"New TXT", L"New CPP", L"New KCPP", L"New PY", L"New HTML", L"New JSON", L"New MD", L"New BAT", L"New ASM", L"Search...", L"SYSTEM FILE / READ-ONLY", L"200 defense layers armed", L"Folder", L"Terminal", L"Drau (3D Cube)", L"Protection (Rust Core)", L"System tamper detected! Files restored from secure storage.",
         L"SECURITY ALERT", L"File:", L"Layer:", L"Status: RESTORED from secure backup", L"CRITICAL: RAM emergency rebuild", L"HIGH: multi-hash breach", L"MEDIUM: honeypot triggered", L"Rust Core + ASM + C + Ada + Pascal + Fortran + Honeypot + SystemROM + Guardian + 200 LAYERS", L"Last patrol:",
-        L"Password:", L"Set", L"Clear", L"Wrong password", L"Enter password to continue"
+        L"Password:", L"Set", L"Clear", L"Wrong password", L"Enter password to continue",
+        L"Auto-update"
     },
     {
         L"\u041f\u0443\u0441\u043a",
@@ -182,7 +184,8 @@ static const Strings g_strings[LANG_COUNT] = {
         L"\u0420\u0435\u0434\u0430\u043a\u0442\u043e\u0440 \u043a\u043e\u0434\u0430", L"KCPP", L"\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c", L"\u0421\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u043e!", L"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", L"\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c", L"\u0412\u0441\u0442\u0430\u0432\u0438\u0442\u044c", L"\u0417\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c", L"\u0421\u043a\u043e\u043c\u043f\u0438\u043b\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0438 \u0437\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c", L"\u041a\u043b\u0430\u0441\u0441\u044b", L"v4.10.2.0",
         L"\u041e\u0442\u043a\u0440\u044b\u0442\u044c", L"\u041f\u0435\u0440\u0435\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u0442\u044c", L"\u041e\u0442\u043c\u0435\u043d\u0430", L"\u041d\u043e\u0432\u044b\u0439 TXT", L"\u041d\u043e\u0432\u044b\u0439 CPP", L"\u041d\u043e\u0432\u044b\u0439 KCPP", L"\u041d\u043e\u0432\u044b\u0439 PY", L"\u041d\u043e\u0432\u044b\u0439 HTML", L"\u041d\u043e\u0432\u044b\u0439 JSON", L"\u041d\u043e\u0432\u044b\u0439 MD", L"\u041d\u043e\u0432\u044b\u0439 BAT", L"\u041d\u043e\u0432\u044b\u0439 ASM", L"\u041f\u043e\u0438\u0441\u043a...", L"\u0421\u0418\u0421\u0422\u0415\u041c\u041d\u042b\u0419 \u0424\u0410\u0419\u041b / \u0442\u043e\u043b\u044c\u043a\u043e \u0447\u0442\u0435\u043d\u0438\u0435", L"200 \u0440\u0443\u0431\u0435\u0436\u0435\u0439 \u0437\u0430\u0449\u0438\u0442\u044b \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u043e", L"\u041f\u0430\u043f\u043a\u0430", L"\u0422\u0435\u0440\u043c\u0438\u043d\u0430\u043b", L"Drau (3D \u043a\u0443\u0431)", L"\u0417\u0430\u0449\u0438\u0442\u0430 (Rust Core)", L"\u041e\u0431\u043d\u0430\u0440\u0443\u0436\u0435\u043d\u043e \u0432\u043c\u0435\u0448\u0430\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e \u0432 \u0441\u0438\u0441\u0442\u0435\u043c\u043d\u044b\u0435 \u0444\u0430\u0439\u043b\u044b! \u0424\u0430\u0439\u043b\u044b \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u044b \u0438\u0437 \u0437\u0430\u0449\u0438\u0449\u0435\u043d\u043d\u043e\u0433\u043e \u0445\u0440\u0430\u043d\u0438\u043b\u0438\u0449\u0430.",
         L"\u0422\u0420\u0415\u0412\u041e\u0413\u0410 \u0411\u0415\u0417\u041e\u041f\u0410\u0421\u041d\u041e\u0421\u0422\u0418", L"\u0424\u0430\u0439\u043b:", L"\u0420\u0443\u0431\u0435\u0436:", L"\u0421\u0442\u0430\u0442\u0443\u0441: \u0412\u041e\u0421\u0421\u0422\u0410\u041d\u041e\u0412\u041b\u0415\u041d\u041e \u0438\u0437 \u0437\u0430\u0449\u0438\u0449\u0435\u043d\u043d\u043e\u0433\u043e \u0445\u0440\u0430\u043d\u0438\u043b\u0438\u0449\u0430", L"\u041a\u0420\u0418\u0422\u0418\u0427\u041d\u041e: \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435 \u0438\u0437 \u043e\u043f\u0435\u0440\u0430\u0442\u0438\u0432\u043d\u043e\u0439 \u043f\u0430\u043c\u044f\u0442\u0438", L"\u0412\u042b\u0421\u041e\u041a\u0418\u0419: \u043d\u0430\u0440\u0443\u0448\u0435\u043d\u0438\u0435 \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438 \u0445\u044d\u0448\u0435\u0439", L"\u0421\u0420\u0415\u0414\u041d\u0418\u0419: \u0441\u0440\u0430\u0431\u043e\u0442\u0430\u043b\u0430 \u043b\u043e\u0432\u0443\u0448\u043a\u0430", L"Rust Core + ASM + C + Ada + Pascal + Fortran + Honeypot + SystemROM + Guardian + 200 LAYERS", L"\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u044f\u044f \u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0430:",
-        L"\u041f\u0430\u0440\u043e\u043b\u044c:", L"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c", L"\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c", L"\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u043e\u043b\u044c", L"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c \u0434\u043b\u044f \u0432\u0445\u043e\u0434\u0430"
+        L"\u041f\u0430\u0440\u043e\u043b\u044c:", L"\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u044c", L"\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c", L"\u041d\u0435\u0432\u0435\u0440\u043d\u044b\u0439 \u043f\u0430\u0440\u043e\u043b\u044c", L"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c \u0434\u043b\u044f \u0432\u0445\u043e\u0434\u0430",
+        L"\u0410\u0432\u0442\u043e\u043e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u0435"
     },
     {
         L"D\u00e9marrer", L"Calculatrice", L"Bloc-notes", L"Param\u00e8tres", L"\u00c0 propos", L"Red Steam", L"Shutdown", L"Poste de travail",
@@ -199,7 +202,8 @@ static const Strings g_strings[LANG_COUNT] = {
         L"\u00c9diteur de code", L"KCPP", L"Enregistrer", L"Enregistr\u00e9!", L"Supprimer", L"Copier", L"Coller", L"Ex\u00e9cuter", L"Compiler & Ex\u00e9cuter", L"Classes", L"v4.10.2.0",
         L"Ouvrir", L"Renommer", L"Annuler", L"Nouveau TXT", L"Nouveau CPP", L"Nouveau KCPP", L"Nouveau PY", L"Nouveau HTML", L"Nouveau JSON", L"Nouveau MD", L"Nouveau BAT", L"Nouveau ASM", L"Recherche...", L"FICHIER SYST\u00c8ME / lecture seule", L"200 couches de d\u00e9fense arm\u00e9es", L"Dossier", L"Terminal", L"Drau (cube 3D)", L"Protection (Rust Core)", L"Intrusion dans les fichiers syst\u00e8me d\u00e9tect\u00e9e ! Fichiers restaur\u00e9s depuis le stockage prot\u00e9g\u00e9.",
         L"ALERTE S\u00c9CURIT\u00c9", L"Fichier:", L"Couche:", L"\u00c9tat: RESTAUR\u00c9 depuis le stockage s\u00e9curis\u00e9", L"CRITIQUE: Rebuild RAM d'urgence", L"\u00c9LEV\u00c9: violation multi-hash", L"MOYEN: pi\u00e8ge d\u00e9clench\u00e9", L"Rust Core + ASM + C + Ada + Pascal + Fortran + Honeypot + SystemROM + Guardian + 200 LAYERS", L"Derni\u00e8re patrouille:",
-        L"Mot de passe:", L"D\u00e9finir", L"Effacer", L"Mot de passe incorrect", L"Entrez le mot de passe pour continuer"
+        L"Mot de passe:", L"D\u00e9finir", L"Effacer", L"Mot de passe incorrect", L"Entrez le mot de passe pour continuer",
+        L"Mise \u00e0 jour automatique"
     },
     {
         L"Starten", L"Taschenrechner", L"Editor", L"Einstellungen", L"\u00dcber", L"Red Steam", L"Shutdown", L"Arbeitsplatz",
@@ -216,7 +220,8 @@ static const Strings g_strings[LANG_COUNT] = {
         L"Code-Editor", L"KCPP", L"Speichern", L"Gespeichert!", L"L\u00f6schen", L"Kopieren", L"Einf\u00fcgen", L"Ausf\u00fchren", L"Kompilieren & Starten", L"Klassen", L"v4.10.2.0",
         L"Offnen", L"Umbenennen", L"Abbrechen", L"Neuer TXT", L"Neuer CPP", L"Neuer KCPP", L"Neues PY", L"Neues HTML", L"Neues JSON", L"Neues MD", L"Neues BAT", L"Neues ASM", L"Suche...", L"SYSTEMDATEI / nur lesen", L"200 Schutzschichten aktiv", L"Ordner", L"Terminal", L"Drau (3D-W\u00fcrfel)", L"Schutz (Rust Core)", L"Eingriff in Systemdateien erkannt! Dateien aus sicherem Speicher wiederhergestellt.",
         L"SICHERHEITSALARM", L"Datei:", L"Schicht:", L"Status: WIEDERHERGESTELLT aus sicherem Speicher", L"KRITISCH: RAM-Notfallwiederherstellung", L"H\u00d6CHST: Multi-Hash-Verletzung", L"MITTEL: Falle ausgel\u00f6st", L"Rust Core + ASM + C + Ada + Pascal + Fortran + Honeypot + SystemROM + Guardian + 200 LAYERS", L"Letzter Check:",
-        L"Passwort:", L"Festlegen", L"Entfernen", L"Falsches Passwort", L"Passwort eingeben"
+        L"Passwort:", L"Festlegen", L"Entfernen", L"Falsches Passwort", L"Passwort eingeben",
+        L"Auto-Update"
     }
 };
 
@@ -3164,6 +3169,20 @@ static void DrawSettingsApp(HDC hdc, OsWindow& w) {
         swprintf(patrolLine, 128, L"%s %02d:%02d:%02d", S.last_patrol, g_lastCheckH, g_lastCheckM, g_lastCheckS);
         RECT sr5 = {contentX + 8, py + (8) * 20 + 8, w.x + w.w - 24, py + (9) * 20 + 8};
         DrawTextW(hdc, patrolLine, -1, &sr5, DT_LEFT);
+        SetTextColor(hdc, RGB(0, 0, 0));
+        wchar_t auLine[160];
+        swprintf(auLine, 160, L"%s: %s", S.auto_update, g_autoUpd ? S.on : S.off);
+        RECT au1 = {contentX + 8, py + (9) * 20 + 12, w.x + w.w - 24, py + (10) * 20 + 12};
+        DrawTextW(hdc, auLine, -1, &au1, DT_LEFT);
+        int aubx = contentX + 170, auby = py + (9) * 20 + 12;
+        HBRUSH aub = CreateSolidBrush(g_autoUpd ? RGB(20, 150, 80) : RGB(150, 150, 150));
+        RECT aubr = {aubx, auby, aubx + 60, auby + 20};
+        FillRect(hdc, &aubr, aub); DeleteObject(aub);
+        HFONT auf = MakeFont(11, TRUE);
+        old = (HFONT)SelectObject(hdc, auf);
+        SetTextColor(hdc, RGB(255, 255, 255));
+        DrawTextW(hdc, g_autoUpd ? S.on : S.off, -1, &aubr, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        SelectObject(hdc, old); DeleteObject(auf);
         SelectObject(hdc, old); DeleteObject(sf3);
         SetTextColor(hdc, RGB(0, 0, 0));
         SelectObject(hdc, old); DeleteObject(sf);
@@ -5415,6 +5434,9 @@ static void HandleSettingsClick(OsWindow& w, int mx, int my) {
             int bx = contentX + i * 92;
             if (PtIn(mx, my, bx, py + 60, 86, 40)) { g_cursorIdx = i; ApplyCursor(); InvalidateRect(g_hwnd, NULL, FALSE); return; }
         }
+    }
+    else if (g_settingsPage == 2) {
+        if (PtIn(mx, my, contentX + 170, py + (9) * 20 + 12, 60, 20)) { g_autoUpd = g_autoUpd ? 0 : 1; InvalidateRect(g_hwnd, NULL, FALSE); return; }
     }
     else if (g_settingsPage == 3) {
         if (PtIn(mx, my, contentX, py + 58, 96, 30)) { g_soundOn = true; InvalidateRect(g_hwnd, NULL, FALSE); return; }
