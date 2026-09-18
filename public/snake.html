@@ -158,6 +158,7 @@ canvas {
     var state = null;         // last received state (guest)
     var hostTick = null;      // host interval
     var lastStateAt = 0;
+    var myYou = -1;
     var alive = false;
 
     var game = { players: [], food: null, tick: 0 };
@@ -372,6 +373,7 @@ function ensurePlayer(conn) {
             addSelfHostPlayer();
         });
         peer.on("connection", function (conn) {
+            guestConns.push(conn);
             conn.on("open", function () {
                 ensurePlayer(conn);
             });
@@ -427,12 +429,13 @@ function ensurePlayer(conn) {
                 if (!d) return;
                 if (d.t === "welcome") {
                     state = d.s || d;
-                    state.you = d.you;
+                    myYou = d.you !== undefined ? d.you : -1;
                     alive = true;
                     showLeave();
                     render();
                 } else if (d.t === "state") {
                     state = d;
+                    if (state.you === undefined) state.you = myYou;
                     alive = true;
                     showLeave();
                     render();
