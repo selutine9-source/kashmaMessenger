@@ -338,7 +338,10 @@ function ensurePlayer(conn) {
                 (d === 1 && p.dir === 3) || (d === 3 && p.dir === 1)) d = p.dir;
             p.dir = d;
             if (d === 0) y--; else if (d === 1) x++; else if (d === 2) y++; else if (d === 3) x--;
-            if (x < 0 || x >= W || y < 0 || y >= H) { p.alive = false; p.deadAt = Date.now(); return; }
+            if (x < 0) x = W - 1;
+            if (x >= W) x = 0;
+            if (y < 0) y = H - 1;
+            if (y >= H) y = 0;
             var hit = game.players.some(function (o) {
                 if (!o.alive || o === p) return false;
                 return o.body.some(function (c) { return c.x === x && c.y === y; });
