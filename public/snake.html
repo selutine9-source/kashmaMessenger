@@ -97,11 +97,11 @@ canvas {
 </div>
 <div class="container">
     <aside class="side">
-        <div style="display:none" id="hostPanel">
+        <div id="hostPanel">
             <h2>Создать игру</h2>
             <button class="btn" id="createBtn">Создать комнату</button>
         </div>
-        <div style="display:none" id="joinPanel">
+        <div id="joinPanel">
             <h2>Войти по коду</h2>
             <div class="row">
                 <input id="joinCode" maxlength="5" placeholder="КОД" style="width:110px">
@@ -553,6 +553,7 @@ canvas {
     }
 
     window.addEventListener("keydown", function (e) {
+        if ((e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) || e.ctrlKey || e.metaKey) return;
         if (KEYMAP[e.keyCode] !== undefined) { e.preventDefault(); changeDir(KEYMAP[e.keyCode]); }
     });
 
